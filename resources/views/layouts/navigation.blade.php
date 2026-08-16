@@ -20,6 +20,10 @@
                         <x-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
                             {{ __('PWA Clients') }}
                         </x-nav-link>
+
+                        <x-nav-link :href="route('admin.database')" target="_blank">
+                            {{ __('Database') }}
+                        </x-nav-link>
                     @endcan
                 </div>
             </div>
@@ -80,6 +84,10 @@
             @can('access-admin')
                 <x-responsive-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
                     {{ __('PWA Clients') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.database')" target="_blank">
+                    {{ __('Database') }}
                 </x-responsive-nav-link>
             @endcan
         </div>

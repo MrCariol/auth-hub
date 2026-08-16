@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route(auth()->check() ? 'dashboard' : 'login');
 });
 
 Route::get('/dashboard', function () {
@@ -20,6 +20,11 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('pwa-clients', PwaClientController::class)->except(['show', 'create', 'edit']);
+
+    Route::any('database', function () {
+        require storage_path('app/adminer/index.php');
+        exit;
+    })->name('database');
 });
 
 require __DIR__.'/auth.php';

@@ -24,7 +24,7 @@ source "$CONFIG_FILE"
 : "${FTP_HOST:?FTP_HOST mancante in deploy/.env.deploy}"
 : "${FTP_USER:?FTP_USER mancante in deploy/.env.deploy}"
 : "${FTP_PASS:?FTP_PASS mancante in deploy/.env.deploy}"
-: "${FTP_REMOTE_DIR:?FTP_REMOTE_DIR mancante in deploy/.env.deploy}"
+: "${FTP_REMOTE_DIR:=}"
 
 CURL_FTP_OPTS=()
 if [ "${FTP_SECURE:-true}" = "true" ]; then

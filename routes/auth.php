@@ -11,14 +11,21 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// GET /login e' volutamente FUORI dal gruppo "guest" qui sotto: deve restare
+// raggiungibile anche da un utente gia' autenticato sull'hub, perche'
+// AuthenticatedSessionController@create() usa proprio quel caso (Auth::check()
+// true) per completare l'handoff silenzioso verso la PWA richiedente (SSO).
+// Il middleware "guest" (RedirectIfAuthenticated) intercetterebbe la
+// richiesta e la manderebbe su /dashboard PRIMA che il controller giri,
+// rendendo quella logica morta.
+Route::get('login', [AuthenticatedSessionController::class, 'create'])
+    ->name('login');
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
-
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
