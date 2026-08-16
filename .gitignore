@@ -2,8 +2,7 @@
 .DS_Store
 .claude
 .env
-.env.backup
-.env.production
+.env.*
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -28,4 +27,5 @@ Homestead.yaml
 Thumbs.db
 /deploy/.env.deploy
 /deploy/.stage
+/deploy/.stage.tar
 /deploy/release.zip

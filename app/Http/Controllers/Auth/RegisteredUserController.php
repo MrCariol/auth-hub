@@ -46,6 +46,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // se la registrazione arriva da una PWA (?client=...), AuthenticatedSessionController@create
+        // completa subito l'handoff col token, dato che l'utente e' gia' autenticato a questo punto
+        return redirect(route('login', ['client' => $request->input('client')]));
     }
 }

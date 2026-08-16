@@ -104,8 +104,9 @@ locale usa il driver `log`.
 Hosting condiviso (cPanel/Plesk) senza accesso shell: il deploy avviene via
 FTP + lo scheduler di Laravel. Dettagli completi in [`deploy/`](deploy/):
 
-- `deploy/deploy.sh` — build locale (asset, dipendenze PHP di produzione),
-  crea l'archivio e lo carica via FTP.
+- `deploy/deploy.sh` (Git Bash) / `deploy/deploy.ps1` (PowerShell) — stesso
+  procedimento nei due ambienti: build locale (asset, dipendenze PHP di
+  produzione), crea l'archivio e lo carica via FTP.
 - `App\Console\Commands\ApplyDeploy` (`app:apply-deploy`), schedulato in
   `routes/console.php` — quando trova un deploy caricato, lo applica
   (estrazione, migration, cache), non tocca mai `.env` né il database.
@@ -126,6 +127,12 @@ FTP + lo scheduler di Laravel. Dettagli completi in [`deploy/`](deploy/):
 
 ```bash
 bash deploy/deploy.sh
+```
+
+oppure, da PowerShell:
+
+```powershell
+.\deploy\deploy.ps1
 ```
 
 Verrà applicato entro un minuto dal cron. Log su `storage/logs/deploy.log`
