@@ -21,30 +21,30 @@
                     @if ($pwaClients->isEmpty())
                         <p class="text-sm text-gray-600">{{ __('Nessuna app registrata.') }}</p>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead>
-                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <th class="px-3 py-2">{{ __('Nome') }}</th>
-                                        <th class="px-3 py-2">{{ __('Dominio') }}</th>
-                                        <th class="px-3 py-2">{{ __('Callback URL') }}</th>
-                                        <th class="px-3 py-2"></th>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{{ __('Nome') }}</th>
+                                        <th>{{ __('Dominio') }}</th>
+                                        <th>{{ __('Callback URL') }}</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100">
+                                <tbody>
                                     @foreach ($pwaClients as $client)
                                         <tr>
-                                            <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{{ $client->name }}</td>
-                                            <td class="px-3 py-2 text-gray-600 whitespace-nowrap">{{ $client->domain }}</td>
-                                            <td class="px-3 py-2 text-gray-500">https://{{ $client->domain }}{{ $client->redirect_path }}</td>
-                                            <td class="px-3 py-2 text-right whitespace-nowrap">
-                                                <div class="flex items-center justify-end gap-3">
-                                                    <a href="{{ route('admin.pwa-clients.edit', $client) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">{{ __('Modifica') }}</a>
+                                            <td class="fw-medium">{{ $client->name }}</td>
+                                            <td>{{ $client->domain }}</td>
+                                            <td class="text-muted">https://{{ $client->domain }}{{ $client->redirect_path }}</td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end gap-2">
+                                                    <a href="{{ route('admin.pwa-clients.edit', $client) }}" class="btn btn-sm btn-outline-primary">{{ __('Modifica') }}</a>
 
                                                     <form method="POST" action="{{ route('admin.pwa-clients.destroy', $client) }}" onsubmit="return confirm('{{ __('Eliminare :name?', ['name' => $client->name]) }}');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">{{ __('Elimina') }}</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">{{ __('Elimina') }}</button>
                                                     </form>
                                                 </div>
                                             </td>

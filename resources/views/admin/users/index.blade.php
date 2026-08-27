@@ -34,54 +34,59 @@
                     @if ($users->isEmpty())
                         <p class="text-sm text-gray-600">{{ __('Nessun utente registrato.') }}</p>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead>
-                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <th class="px-3 py-2">{{ __('Nome') }}</th>
-                                        <th class="px-3 py-2">{{ __('Email') }}</th>
-                                        <th class="px-3 py-2">{{ __('Stato') }}</th>
-                                        <th class="px-3 py-2">{{ __('Ruolo') }}</th>
-                                        <th class="px-3 py-2">{{ __('Registrato il') }}</th>
-                                        <th class="px-3 py-2"></th>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{{ __('Nome') }}</th>
+                                        <th>{{ __('Email') }}</th>
+                                        <th>{{ __('Stato') }}</th>
+                                        <th>{{ __('Ruolo') }}</th>
+                                        <th>{{ __('Registrato il') }}</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100">
+                                <tbody>
+                                    @php
+                                        $statusBadges = [
+                                            'active' => 'bg-success',
+                                            'pending' => 'bg-warning text-dark',
+                                            'blocked' => 'bg-danger',
+                                        ];
+                                    @endphp
                                     @foreach ($users as $user)
                                         <tr>
-                                            <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{{ $user->name }}</td>
-                                            <td class="px-3 py-2 text-gray-600">{{ $user->email }}</td>
-                                            <td class="px-3 py-2 whitespace-nowrap">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border {{ $statusStyles[$user->status] ?? 'bg-gray-50 border-gray-200 text-gray-800' }}">
+                                            <td class="fw-medium">{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>
+                                                <span class="badge {{ $statusBadges[$user->status] ?? 'bg-secondary' }}">
                                                     {{ $statusLabels[$user->status] ?? $user->status }}
                                                 </span>
                                             </td>
-                                            <td class="px-3 py-2 whitespace-nowrap">
+                                            <td>
                                                 @if ($user->is_admin)
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-indigo-50 border-indigo-200 text-indigo-800">
-                                                        {{ __('Admin') }}
-                                                    </span>
+                                                    <span class="badge bg-primary">{{ __('Admin') }}</span>
                                                 @else
-                                                    <span class="text-xs text-gray-400">—</span>
+                                                    <span class="text-muted">—</span>
                                                 @endif
                                             </td>
-                                            <td class="px-3 py-2 text-gray-500 whitespace-nowrap">{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                                            <td class="px-3 py-2 text-right whitespace-nowrap">
-                                                <div class="flex items-center justify-end gap-3">
+                                            <td class="text-muted">{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end gap-2">
                                                     @if ($user->status === 'pending')
                                                         <form method="POST" action="{{ route('admin.users.approve', $user) }}">
                                                             @csrf
-                                                            <button type="submit" class="text-green-700 hover:text-green-900 font-medium">{{ __('Approva') }}</button>
+                                                            <button type="submit" class="btn btn-sm btn-outline-success">{{ __('Approva') }}</button>
                                                         </form>
                                                     @endif
 
-                                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">{{ __('Modifica') }}</a>
+                                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-primary">{{ __('Modifica') }}</a>
 
                                                     @unless ($user->is(auth()->user()))
                                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('{{ __('Eliminare :name? Non potrà più accedere.', ['name' => $user->name]) }}');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium">{{ __('Elimina') }}</button>
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">{{ __('Elimina') }}</button>
                                                         </form>
                                                     @endunless
                                                 </div>
