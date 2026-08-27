@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\PwaClient;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -19,7 +21,15 @@ class AuthenticatedSessionController extends Controller
     public function create(Request $request): View|RedirectResponse
     {
         if (Auth::check()) {
-            return $this->handoff($request, Auth::user());
+            $user = Auth::user();
+
+            if (! $user->isActive()) {
+                $this->logoutInactive($request);
+
+                return redirect()->route('login')->withErrors(['email' => $this->statusMessage($user)]);
+            }
+
+            return $this->handoff($request, $user);
         }
 
         return view('auth.login', [
@@ -36,7 +46,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return $this->handoff($request, $request->user());
+        $user = $request->user();
+
+        if (! $user->isActive()) {
+            $this->logoutInactive($request);
+
+            throw ValidationException::withMessages(['email' => $this->statusMessage($user)]);
+        }
+
+        return $this->handoff($request, $user);
     }
 
     /**
@@ -74,5 +92,20 @@ class AuthenticatedSessionController extends Controller
         )->plainTextToken;
 
         return redirect()->away($client->callbackUrl().'#token='.$token);
+    }
+
+    protected function logoutInactive(Request $request): void
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
+
+    protected function statusMessage(User $user): string
+    {
+        return $user->status === 'blocked'
+            ? 'Il tuo account è stato bloccato. Contatta l\'amministratore.'
+            : 'Il tuo account è in attesa di approvazione da parte di un amministratore.';
     }
 }

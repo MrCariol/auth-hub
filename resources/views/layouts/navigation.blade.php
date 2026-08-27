@@ -16,9 +16,17 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    <x-nav-link href="https://example.it">
+                        {{ __('Le mie App') }}
+                    </x-nav-link>
+
                     @can('access-admin')
                         <x-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
                             {{ __('PWA Clients') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Utenti') }}
                         </x-nav-link>
 
                         <x-nav-link :href="route('admin.database')" target="_blank">
@@ -81,9 +89,17 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link href="https://example.it">
+                {{ __('Le mie App') }}
+            </x-responsive-nav-link>
+
             @can('access-admin')
                 <x-responsive-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
                     {{ __('PWA Clients') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Utenti') }}
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('admin.database')" target="_blank">

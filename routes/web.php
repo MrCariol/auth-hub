@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\PwaClientController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,16 +11,18 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'active', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'active', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('pwa-clients', PwaClientController::class)->except(['show', 'create', 'edit']);
+    Route::resource('users', UserController::class)->only(['index', 'update']);
+    Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
 
     Route::any('database', function () {
         require storage_path('app/adminer/index.php');

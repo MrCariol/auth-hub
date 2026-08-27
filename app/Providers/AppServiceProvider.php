@@ -26,13 +26,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(Registered::class, SendNewUserRegistrationNotification::class);
 
-        // Pannello di amministrazione (gestione pwa_clients): accessibile solo
-        // all'utente il cui indirizzo coincide con quello gia' usato per le
-        // notifiche di nuova registrazione, niente ruolo/colonna dedicati.
+        // Pannello di amministrazione: accessibile a chiunque abbia il flag
+        // is_admin, impostabile da un admin esistente nella lista utenti.
         Gate::define('access-admin', function (User $user) {
-            $adminEmail = config('mail.admin_notification_address');
-
-            return $adminEmail && strcasecmp($user->email, $adminEmail) === 0;
+            return $user->is_admin;
         });
     }
 }
