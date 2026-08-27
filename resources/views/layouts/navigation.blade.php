@@ -22,7 +22,7 @@
 
                     @can('access-admin')
                         <x-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
-                            {{ __('PWA Clients') }}
+                            {{ __('Apps') }}
                         </x-nav-link>
 
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
@@ -95,7 +95,7 @@
 
             @can('access-admin')
                 <x-responsive-nav-link :href="route('admin.pwa-clients.index')" :active="request()->routeIs('admin.pwa-clients.*')">
-                    {{ __('PWA Clients') }}
+                    {{ __('Apps') }}
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">

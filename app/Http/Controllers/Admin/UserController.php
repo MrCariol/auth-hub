@@ -19,6 +19,11 @@ class UserController extends Controller
         ]);
     }
 
+    public function edit(User $user): View
+    {
+        return view('admin.users.edit', ['user' => $user]);
+    }
+
     /**
      * Aggiorna nome/email/stato/admin. Status e is_admin sono volutamente
      * fuori dal Fillable del model (mass assignment solo per name/email/password
@@ -65,5 +70,22 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('admin.users.index')->with('status', "Utente {$user->name} approvato.");
+    }
+
+    /**
+     * Soft-delete: l'utente sparisce dalle query di default (incluse quelle
+     * usate dal provider di autenticazione), quindi non potra' piu' accedere
+     * ne' restare autenticato su una sessione gia' aperta.
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->is(Auth::user())) {
+            return back()->withErrors(['delete' => 'Non puoi eliminare il tuo stesso account.']);
+        }
+
+        $user->tokens()->delete();
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('status', "Utente {$user->name} eliminato.");
     }
 }

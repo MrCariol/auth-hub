@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('PWA Clients') }}
+            {{ __('Apps') }}
         </h2>
     </x-slot>
 
@@ -16,49 +16,42 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium mb-4">{{ __('Registered clients') }}</h3>
+                    <h3 class="text-lg font-medium mb-4">{{ __('App registrate') }}</h3>
 
                     @if ($pwaClients->isEmpty())
-                        <p class="text-sm text-gray-600">{{ __('No PWA client registered yet.') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('Nessuna app registrata.') }}</p>
                     @else
-                        <div class="space-y-4">
-                            @foreach ($pwaClients as $client)
-                                <form method="POST" action="{{ route('admin.pwa-clients.update', $client) }}" class="border rounded-md p-4">
-                                    @csrf
-                                    @method('PUT')
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead>
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-3 py-2">{{ __('Nome') }}</th>
+                                        <th class="px-3 py-2">{{ __('Dominio') }}</th>
+                                        <th class="px-3 py-2">{{ __('Callback URL') }}</th>
+                                        <th class="px-3 py-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @foreach ($pwaClients as $client)
+                                        <tr>
+                                            <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{{ $client->name }}</td>
+                                            <td class="px-3 py-2 text-gray-600 whitespace-nowrap">{{ $client->domain }}</td>
+                                            <td class="px-3 py-2 text-gray-500">https://{{ $client->domain }}{{ $client->redirect_path }}</td>
+                                            <td class="px-3 py-2 text-right whitespace-nowrap">
+                                                <div class="flex items-center justify-end gap-3">
+                                                    <a href="{{ route('admin.pwa-clients.edit', $client) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">{{ __('Modifica') }}</a>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                        <div>
-                                            <x-input-label :value="__('Name (used as ?client=...)')" />
-                                            <x-text-input type="text" name="name" class="mt-1 block w-full" value="{{ old('name', $client->name) }}" required />
-                                        </div>
-                                        <div>
-                                            <x-input-label :value="__('Domain')" />
-                                            <x-text-input type="text" name="domain" class="mt-1 block w-full" value="{{ old('domain', $client->domain) }}" required />
-                                        </div>
-                                        <div>
-                                            <x-input-label :value="__('Redirect path')" />
-                                            <x-text-input type="text" name="redirect_path" class="mt-1 block w-full" value="{{ old('redirect_path', $client->redirect_path) }}" required />
-                                        </div>
-                                    </div>
-
-                                    <p class="text-xs text-gray-500 mt-2">{{ __('Callback URL') }}: https://{{ $client->domain }}{{ $client->redirect_path }}</p>
-
-                                    <div class="flex items-center justify-between mt-3">
-                                        <x-primary-button type="submit">{{ __('Save') }}</x-primary-button>
-                                    </div>
-                                </form>
-                            @endforeach
-                        </div>
-
-                        <div class="mt-4">
-                            @foreach ($pwaClients as $client)
-                                <form method="POST" action="{{ route('admin.pwa-clients.destroy', $client) }}" class="inline" onsubmit="return confirm('{{ __('Delete client :name?', ['name' => $client->name]) }}');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <x-danger-button type="submit" class="mr-2 mb-2">{{ __('Delete') }} {{ $client->name }}</x-danger-button>
-                                </form>
-                            @endforeach
+                                                    <form method="POST" action="{{ route('admin.pwa-clients.destroy', $client) }}" onsubmit="return confirm('{{ __('Eliminare :name?', ['name' => $client->name]) }}');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">{{ __('Elimina') }}</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     @endif
                 </div>
@@ -66,7 +59,7 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium mb-4">{{ __('Add new client') }}</h3>
+                    <h3 class="text-lg font-medium mb-4">{{ __('Aggiungi nuova app') }}</h3>
 
                     <form method="POST" action="{{ route('admin.pwa-clients.store') }}">
                         @csrf
@@ -90,7 +83,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <x-primary-button type="submit">{{ __('Add client') }}</x-primary-button>
+                            <x-primary-button type="submit">{{ __('Aggiungi app') }}</x-primary-button>
                         </div>
                     </form>
                 </div>

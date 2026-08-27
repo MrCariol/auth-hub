@@ -20,8 +20,8 @@ Route::middleware(['auth', 'active'])->group(function () {
 });
 
 Route::middleware(['auth', 'active', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('pwa-clients', PwaClientController::class)->except(['show', 'create', 'edit']);
-    Route::resource('users', UserController::class)->only(['index', 'update']);
+    Route::resource('pwa-clients', PwaClientController::class)->except(['show', 'create']);
+    Route::resource('users', UserController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
 
     Route::any('database', function () {

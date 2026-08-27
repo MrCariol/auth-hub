@@ -10,10 +10,6 @@ use Illuminate\View\View;
 
 class PwaClientController extends Controller
 {
-    /**
-     * Elenco dei client PWA registrati, con form di creazione e modifica
-     * inline: sono solo 3 campi, non serve una pagina separata per ognuno.
-     */
     public function index(): View
     {
         return view('admin.pwa-clients.index', [
@@ -27,7 +23,12 @@ class PwaClientController extends Controller
 
         PwaClient::create($data);
 
-        return redirect()->route('admin.pwa-clients.index')->with('status', 'Client PWA creato.');
+        return redirect()->route('admin.pwa-clients.index')->with('status', 'App creata.');
+    }
+
+    public function edit(PwaClient $pwaClient): View
+    {
+        return view('admin.pwa-clients.edit', ['pwaClient' => $pwaClient]);
     }
 
     public function update(Request $request, PwaClient $pwaClient): RedirectResponse
@@ -36,14 +37,14 @@ class PwaClientController extends Controller
 
         $pwaClient->update($data);
 
-        return redirect()->route('admin.pwa-clients.index')->with('status', 'Client PWA aggiornato.');
+        return redirect()->route('admin.pwa-clients.index')->with('status', 'App aggiornata.');
     }
 
     public function destroy(PwaClient $pwaClient): RedirectResponse
     {
         $pwaClient->delete();
 
-        return redirect()->route('admin.pwa-clients.index')->with('status', 'Client PWA eliminato.');
+        return redirect()->route('admin.pwa-clients.index')->with('status', 'App eliminata.');
     }
 
     /**
