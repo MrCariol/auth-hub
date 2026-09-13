@@ -16,7 +16,7 @@ token) — leggerlo prima di modificare il flusso di autenticazione.
 Questo repository specifico è configurato (via `.env`, non versionato) per
 girare su `example.it`, ma il codice sorgente non deve mai avere quel
 dominio (o un altro) hardcodato: qualunque valore specifico di dominio va
-sempre letto da config (`APP_DOMAIN`, `APP_URL`, `HOMEPAGE_URL`) o dal DB
+sempre letto da config (`APP_DOMAIN`, `APP_URL`) o dal DB
 (`pwa_clients`), mai scritto letteralmente in PHP/Blade/config di default.
 
 ## Comandi

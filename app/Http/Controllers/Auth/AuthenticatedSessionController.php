@@ -73,7 +73,7 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Redirect the user back to the requesting PWA with a fresh API token,
-     * or to the homepage launcher if no (valid) client was specified.
+     * or to the "Le mie App" launcher if no (valid) client was specified.
      */
     protected function handoff(Request $request, $user): RedirectResponse
     {
@@ -82,7 +82,7 @@ class AuthenticatedSessionController extends Controller
         $client = $clientName ? PwaClient::where('name', $clientName)->first() : null;
 
         if (! $client) {
-            return redirect()->away(config('app.homepage_url'));
+            return redirect()->route('apps.index');
         }
 
         $token = $user->createToken(
