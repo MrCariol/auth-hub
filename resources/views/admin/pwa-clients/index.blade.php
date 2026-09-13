@@ -72,7 +72,7 @@
                             </div>
                             <div>
                                 <x-input-label for="new_domain" :value="__('Domain')" />
-                                <x-text-input id="new_domain" type="text" name="domain" class="mt-1 block w-full" value="{{ old('domain') }}" placeholder="shoppingkart.example.it" />
+                                <x-text-input id="new_domain" type="text" name="domain" class="mt-1 block w-full" value="{{ old('domain') }}" placeholder="shopping-kart.example.com" />
                                 <x-input-error :messages="$errors->get('domain')" class="mt-1" />
                             </div>
                             <div>

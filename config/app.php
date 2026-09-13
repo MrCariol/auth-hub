@@ -61,10 +61,11 @@ return [
     |
     | Where the user is sent after logging in on the hub directly (i.e. no
     | "client" was specified), or when the requested client is unknown.
+    | Typically a landing page listing the available PWAs.
     |
     */
 
-    'homepage_url' => env('HOMEPAGE_URL', 'https://example.it'),
+    'homepage_url' => env('HOMEPAGE_URL', env('APP_URL', 'http://localhost')),
 
     /*
     |--------------------------------------------------------------------------

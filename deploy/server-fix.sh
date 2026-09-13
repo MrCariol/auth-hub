@@ -21,7 +21,7 @@
 #      è ispezionabile via FTP/File Manager anche se qualcosa fallisce.
 #
 # Uso: aggiungere a cPanel > Cron Jobs una riga tipo
-#   * * * * * /bin/bash /home/tuoutente/auth.example.it/deploy/server-fix.sh >> /home/tuoutente/auth.example.it/storage/logs/server-fix-cron.log 2>&1
+#   * * * * * /bin/bash /home/tuoutente/auth.example.com/deploy/server-fix.sh >> /home/tuoutente/auth.example.com/storage/logs/server-fix-cron.log 2>&1
 #
 # È idempotente: una volta che vendor/ e il deploy sono a posto, le run
 # successive sono no-op veloci (composer install senza modifiche, migrate

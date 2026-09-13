@@ -1,14 +1,15 @@
-# Auth example.it
+# Auth Hub
 
-Hub di autenticazione centralizzato per le PWA su sottodomini di `example.it`
-(es. `routine.example.it`). Un solo utente/database per tutte le PWA: ognuna
-gestisce i propri dati in autonomia, collegati all'utente tramite un
+Hub di autenticazione centralizzato per PWA su sottodomini di un dominio
+comune (es. `myapp.example.com`). Un solo utente/database per tutte le PWA:
+ognuna gestisce i propri dati in autonomia, collegati all'utente tramite un
 identificatore pubblico (UUID) restituito dall'hub.
 
 ## Come funziona
 
-- **Login unico**: solo l'hub (`auth.example.it`) ha login, registrazione,
-  reset password (Laravel Breeze). Le PWA non hanno un proprio form di login.
+- **Login unico**: solo l'hub (es. `auth.example.com`) ha login,
+  registrazione, reset password (Laravel Breeze). Le PWA non hanno un proprio
+  form di login.
 - **Identificatore utente**: ogni utente ha, oltre alla PK interna, un campo
   `uuid` pubblico (`users.uuid`). È questo — mai la PK interna — l'ID che le
   PWA devono salvare per collegare i propri dati all'utente.
@@ -23,6 +24,19 @@ identificatore pubblico (UUID) restituito dall'hub.
   all'altra non richiede di rifare login: la pagina di login rileva la
   sessione attiva e reindirizza subito con un nuovo token.
 
+## Configurazione
+
+Oltre alle variabili standard di Laravel, il `.env` prevede:
+
+| Variabile | Descrizione |
+|---|---|
+| `APP_DOMAIN` | Dominio radice condiviso da hub e PWA (es. `example.com`). Usato in `config/cors.php` per accettare come origine API qualunque suo sottodominio. |
+| `HOMEPAGE_URL` | Dove finisce l'utente che effettua il login sull'hub senza specificare una PWA (`?client=...`) — tipicamente una pagina che elenca le app disponibili. |
+| `PWA_TOKEN_TTL_MINUTES` | Durata (minuti) del token a scorrimento emesso per ogni PWA. Default 30 giorni. |
+| `MAIL_ADMIN_NOTIFICATION_ADDRESS` | Indirizzo che riceve una notifica ad ogni nuova registrazione. Vuoto = disabilitata. |
+
+Vedi [`.env.example`](.env.example) per i default e i commenti completi.
+
 ## Integrazione lato PWA
 
 ### 1. Reindirizzare al login
@@ -32,7 +46,7 @@ reindirizzalo all'hub passando il nome della tua PWA (quello registrato in
 `pwa_clients.name`):
 
 ```js
-window.location.href = `https://auth.example.it/login?client=routine`;
+window.location.href = `https://auth.example.com/login?client=myapp`;
 ```
 
 ### 2. Ricevere il token
@@ -55,7 +69,7 @@ if (token) {
 ### 3. Recuperare i dati utente / validare il token
 
 ```js
-const res = await fetch('https://auth.example.it/api/user', {
+const res = await fetch('https://auth.example.com/api/user', {
     headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
 });
 
@@ -67,7 +81,7 @@ if (res.status === 401) {
 ```
 
 Il CORS è già configurato sull'hub per accettare richieste da qualunque
-sottodominio `*.example.it` (`config/cors.php`).
+sottodominio di `APP_DOMAIN` (`config/cors.php`).
 
 ### 4. Dati propri della PWA
 
@@ -88,16 +102,16 @@ Inserisci una riga nella tabella `pwa_clients`:
 
 | campo | esempio |
 |---|---|
-| `name` | `routine` (va nel parametro `?client=`) |
-| `domain` | `routine.example.it` |
+| `name` | `myapp` (va nel parametro `?client=`) |
+| `domain` | `myapp.example.com` |
 | `redirect_path` | `/auth/callback` |
 
 ## Notifiche
 
 Ogni nuova registrazione invia una mail a
-`MAIL_ADMIN_NOTIFICATION_ADDRESS` (`.env`). In produzione la spedizione usa
-`sendmail` locale del server (nessuna credenziale SMTP necessaria); in
-locale usa il driver `log`.
+`MAIL_ADMIN_NOTIFICATION_ADDRESS` (`.env`), se impostato. In produzione la
+spedizione usa `sendmail` locale del server (nessuna credenziale SMTP
+necessaria); in locale usa il driver `log`.
 
 ## Deploy
 
@@ -116,7 +130,8 @@ FTP + lo scheduler di Laravel. Dettagli completi in [`deploy/`](deploy/):
   di produzione.
 
 **Setup una tantum sul pannello hosting:**
-1. Sottodominio `auth.example.it` con document root su `{APP_ABS_PATH}/public`.
+1. Sottodominio (es. `auth.example.com`) con document root su
+   `{APP_ABS_PATH}/public`.
 2. Cron ogni minuto: `php {APP_ABS_PATH}/artisan schedule:run >> /dev/null 2>&1`
    (unico cron per tutto ciò che è schedulato in Laravel, deploy incluso).
 3. Primo deploy: l'app va portata online una prima volta a mano (File

@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "example/auth-hub",
+    "name": "auth-hub/auth-hub",
     "type": "project",
-    "description": "Hub di autenticazione centralizzato per le PWA su sottodomini di example.it.",
+    "description": "Hub di autenticazione centralizzato (SSO) per PWA su sottodomini di un dominio comune.",
     "license": "MIT",
     "require": {
         "php": "^8.3",

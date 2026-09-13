@@ -13,7 +13,13 @@ class SendNewUserRegistrationNotification
      */
     public function handle(Registered $event): void
     {
-        Notification::route('mail', config('mail.admin_notification_address'))
+        $address = config('mail.admin_notification_address');
+
+        if (! $address) {
+            return;
+        }
+
+        Notification::route('mail', $address)
             ->notify(new NewUserRegistered($event->user));
     }
 }
