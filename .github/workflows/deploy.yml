@@ -1,0 +1,82 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: zip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installa dipendenze frontend
+        run: npm ci
+
+      - name: Build asset frontend
+        run: npm run build
+
+      - name: Prepara stage (esclusi file di sviluppo/segreti)
+        run: |
+          mkdir -p deploy/.stage
+          tar \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='deploy' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='database/database.sqlite' \
+            --exclude='storage/app/deploy' \
+            --exclude='storage/logs' \
+            --exclude='storage/framework/cache/data' \
+            --exclude='storage/framework/sessions' \
+            --exclude='storage/framework/views' \
+            --exclude='tests' \
+            -cf - . | tar -xf - -C deploy/.stage
+          mkdir -p deploy/.stage/public
+          cp -r public/build deploy/.stage/public/build
+
+      - name: Installa dipendenze PHP di produzione
+        working-directory: deploy/.stage
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Crea archivio
+        run: php deploy/build-zip.php deploy/.stage deploy/release.zip
+
+      - name: Upload archivio via FTP
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+          FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+          FTP_SECURE: ${{ secrets.FTP_SECURE }}
+        run: |
+          set -euo pipefail
+          CURL_FTP_OPTS=()
+          if [ "${FTP_SECURE:-true}" = "true" ]; then
+            FTP_URL="ftps://${FTP_HOST}"
+            CURL_FTP_OPTS+=(--ssl-reqd)
+          else
+            FTP_URL="ftp://${FTP_HOST}"
+          fi
+
+          curl -sS --ftp-create-dirs "${CURL_FTP_OPTS[@]}" \
+            -u "${FTP_USER}:${FTP_PASS}" \
+            -T deploy/release.zip \
+            "${FTP_URL}${FTP_REMOTE_DIR}/storage/app/deploy/release.zip"
+
+          : > deploy/.trigger.tmp
+          curl -sS --ftp-create-dirs "${CURL_FTP_OPTS[@]}" \
+            -u "${FTP_USER}:${FTP_PASS}" \
+            -T deploy/.trigger.tmp \
+            "${FTP_URL}${FTP_REMOTE_DIR}/storage/app/deploy/deploy.trigger"
