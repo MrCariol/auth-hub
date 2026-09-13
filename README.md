@@ -31,7 +31,6 @@ Oltre alle variabili standard di Laravel, il `.env` prevede:
 | Variabile | Descrizione |
 |---|---|
 | `APP_DOMAIN` | Dominio radice condiviso da hub e PWA (es. `example.com`). Usato in `config/cors.php` per accettare come origine API qualunque suo sottodominio. |
-| `HOMEPAGE_URL` | Dove finisce l'utente che effettua il login sull'hub senza specificare una PWA (`?client=...`) — tipicamente una pagina che elenca le app disponibili. |
 | `PWA_TOKEN_TTL_MINUTES` | Durata (minuti) del token a scorrimento emesso per ogni PWA. Default 30 giorni. |
 | `MAIL_ADMIN_NOTIFICATION_ADDRESS` | Indirizzo che riceve una notifica ad ogni nuova registrazione. Vuoto = disabilitata. |
 

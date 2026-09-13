@@ -16,7 +16,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="config('app.homepage_url')">
+                    <x-nav-link :href="route('apps.index')" :active="request()->routeIs('apps.index')">
                         {{ __('Le mie App') }}
                     </x-nav-link>
 
@@ -89,7 +89,7 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="config('app.homepage_url')">
+            <x-responsive-nav-link :href="route('apps.index')" :active="request()->routeIs('apps.index')">
                 {{ __('Le mie App') }}
             </x-responsive-nav-link>
 

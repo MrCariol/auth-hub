@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PwaClientController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AppLauncherController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'active', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/apps', [AppLauncherController::class, 'index'])->name('apps.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
