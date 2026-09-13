@@ -80,24 +80,19 @@ Hosting condiviso (cPanel/Plesk) **senza accesso shell**: niente SSH, niente
 `artisan` diretto sul server. Il deploy è interamente via FTP + scheduler
 Laravel:
 
-1. `deploy/deploy.ps1` (PowerShell, ambiente di questo repo) — build locale
-   (npm build, composer install --no-dev), crea `release.zip` e carica
-   via FTP archivio + trigger in `storage/app/deploy/` sul server. Le
-   credenziali stanno in `deploy/.env.deploy` (mai committare; l'example è
-   `deploy/.env.deploy.example`).
+1. `.github/workflows/deploy.yml` — ad ogni push su `main`, GitHub Actions
+   fa la build (npm build, composer install --no-dev), crea `release.zip` con
+   `deploy/build-zip.php` e carica via FTP archivio + trigger in
+   `storage/app/deploy/` sul server. Le credenziali FTP (`FTP_HOST`,
+   `FTP_USER`, `FTP_PASS`, `FTP_REMOTE_DIR`, `FTP_SECURE`) sono GitHub
+   Secrets del repo, non file locali.
 2. Sul server, `Schedule::command('app:apply-deploy')` (`routes/console.php`,
    ogni 5 minuti tramite l'unico cron `php artisan schedule:run` configurato
    sul pannello hosting) fa girare `App\Console\Commands\ApplyDeploy`: estrae
    `release.zip`, esegue `migrate --force` + cache, poi cancella trigger e
-   zip. **Non tocca mai `.env` né il database** — l'archivio da `deploy.ps1`
-   li esclude esplicitamente.
+   zip. **Non tocca mai `.env` né il database** — l'archivio dal workflow li
+   esclude esplicitamente.
 3. Log del deploy applicato: `storage/logs/deploy.log` sul server.
 
-**Dopo ogni modifica al codice, lancia `deploy/deploy.ps1` come ultimo step**,
-senza bisogno che l'utente lo chieda esplicitamente:
-
-```bash
-powershell -File deploy/deploy.ps1
-```
-
-Verrà applicato entro 5 minuti dal cron sul server.
+Un push su `main` è quindi già sufficiente: nessuno script locale da
+lanciare manualmente dopo una modifica.
